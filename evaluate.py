@@ -1,6 +1,6 @@
 import numpy as np
 import argparse
-from batch_compression import compress
+from compression import compress
 from PIL import Image
 
 def psnr_calc(img_gt: np.array, img_comp: np.array):
