@@ -39,42 +39,26 @@ def pad_to_power_of_2(array: np.array):
     
     return padded_array, cols, rows
 
-## FFT Transformation of 2D matrices in O(m * n * log(m * n))
+## 2D FFT implementation using Cooley-Tukey (O(n log n))
 def FFT_2D_optimized(matrix: np.array):
-    # Ensure matrix dimensions are powers of 2
-    matrix = pad_to_power_of_2(matrix)[0]
+    # Perform FFT on each row
+    transformed_rows = np.apply_along_axis(FFT_1D_optimized, axis=1, arr=matrix)
     
-    # FFT Matrix
-    fft_matrix = np.zeros(matrix.shape, dtype=complex)
+    # Perform FFT on each column
+    transformed_matrix = np.apply_along_axis(FFT_1D_optimized, axis=0, arr=transformed_rows)
     
-    # Processing rows
-    for i in range(matrix.shape[0]):
-        fft_matrix[i] = FFT_1D_optimized(matrix[i])
-    
-    # Processing columns
-    for i in range(matrix.shape[1]):
-        fft_matrix[:, i] = FFT_1D_optimized(fft_matrix[:, i])
-        
-    return fft_matrix
+    return transformed_matrix
 
-## Inverse FFT Transformation of 2D matrices in O(m * n * log(m * n))
+## 2D IFFT implementation using Cooley-Tukey (O(n log n))
 def IFFT_2D_optimized(matrix: np.array):
-    # Ensure matrix dimensions are powers of 2
-    matrix = pad_to_power_of_2(matrix)[0]
+    # Perform IFFT on each row
+    transformed_rows = np.apply_along_axis(IFFT_1D_optimized, axis=1, arr=matrix)
     
-    # IFFT Matrix
-    ifft_matrix = np.zeros(matrix.shape, dtype=complex)
+    # Perform IFFT on each column
+    transformed_matrix = np.apply_along_axis(IFFT_1D_optimized, axis=0, arr=transformed_rows)
     
-    # Processing columns
-    for i in range(matrix.shape[0]):
-        ifft_matrix[i] = IFFT_1D_optimized(matrix[:, i])
-        
-    # Processing rows
-    for i in range(matrix.shape[1]):
-        ifft_matrix[:, i] = IFFT_1D_optimized(ifft_matrix[:, i])
-        
-    ifft_matrix = ifft_matrix / np.prod(matrix.shape)  # Normalize by matrix size
-    return ifft_matrix.real.astype(matrix.dtype)  # Convert to real and original data type
+    # Normalize the result
+    return transformed_matrix / (matrix.shape[0] * matrix.shape[1])
 
 ## FFT Transformation of 2D matrices for RGB images
 def FFT_2D_RGB(matrix: np.array):

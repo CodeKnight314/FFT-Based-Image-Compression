@@ -3,8 +3,9 @@ import argparse
 import matplotlib.pyplot as plt
 from PIL import Image
 from batch_compression import compress
+import os
 
-def visualize_compression(img_path: str, threshold_value: int):
+def visualize_compression(img_path: str, threshold_value: int, output_path: str):
     """
     Visualize the original and compressed images side by side.
 
@@ -14,7 +15,7 @@ def visualize_compression(img_path: str, threshold_value: int):
     """
     img = np.array(Image.open(img_path).convert("RGB"))
     
-    img_compressed = compress(img, threshold_value)
+    img_compressed = compress(img_path, threshold_value)
     
     fig, ax = plt.subplots(1, 2, figsize=(12, 6))
     
@@ -28,11 +29,15 @@ def visualize_compression(img_path: str, threshold_value: int):
     
     plt.tight_layout()
     plt.show()
+    
+    if output_path: 
+        output_file = os.path.join(output_path, os.path.basename(img).split('.')[0] + "_compressed.png")
+        plt.savefig(output_file)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Visualize the original and compressed images.")
     parser.add_argument("--img_path", type=str, required=True, help="Path to the image to be compressed.")
-    parser.add_argument("--threshold_value", type=int, required=True, help="Threshold value for compression.")
-    
+    parser.add_argument("--threshold", type=float, required=True, help="Threshold value for compression.")
+    parser.add_argument("--output", type=str, help="Output path for visualization purposes")
     args = parser.parse_args()
-    visualize_compression(args.img_path, args.threshold_value)
+    visualize_compression(args.img_path, args.threshold, args.output)

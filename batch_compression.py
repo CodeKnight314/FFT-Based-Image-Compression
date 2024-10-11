@@ -29,7 +29,7 @@ def unpad_to_original(array: np.array, original_cols: int, original_rows: int):
     else:
         return array[:original_cols, :original_rows]
 
-def compress(image_path: str, threshold_value: float):
+def compress(image_path: str, threshold_value: float, save_path=None):
     """
     Compression of image with FFT based compression.
 
@@ -49,6 +49,15 @@ def compress(image_path: str, threshold_value: float):
     img_dcomp_padded = np.abs(IFFT_2D_RGB(compressed_fft))
     img_dcomp = unpad_to_original(img_dcomp_padded, original_cols, original_rows)
     
+    # Create an Image object from the numpy array
+    img_fft = Image.fromarray(np.uint8(img_dcomp))
+
+    if save_path:
+        # Apply horizontal flip and 90-degree anti-clockwise rotation
+        img_fft = img_fft.transpose(Image.FLIP_LEFT_RIGHT)
+        img_fft = img_fft.rotate(90)
+        img_fft.save(save_path)
+
     return img_dcomp
 
 def compress_batch(img_dir: str, threshold_value: float, output_path: str):
@@ -56,17 +65,7 @@ def compress_batch(img_dir: str, threshold_value: float, output_path: str):
 
     for img in tqdm(img_paths, desc="[Image Compression]"):
         output_file = os.path.join(output_path, os.path.basename(img).split('.')[0] + "_compressed.png")
-        img_fft = compress(img, threshold_value)
-        
-        # Create an Image object from the numpy array
-        img_fft = Image.fromarray(np.uint8(img_fft))
-        
-        # Apply horizontal flip and 90-degree anti-clockwise rotation
-        img_fft = img_fft.transpose(Image.FLIP_LEFT_RIGHT)
-        img_fft = img_fft.rotate(90)
-
-        if output_file:
-            img_fft.save(output_file)
+        compress(img, threshold_value, output_file)
 
     print("[INFO] Image compression completed")
 
@@ -75,7 +74,7 @@ if __name__ == "__main__":
     parser.add_argument("--img", type=str, help="Image for compression")
     parser.add_argument("--img_dir", type=str, help="Directory of images for compression")
     parser.add_argument("--threshold", type=float, required=True, help="Threshold value for FFT-based compression")
-    parser.add_argument("--output_path", type=str, help="Output directory for compressed images", default="./compressed_images")
+    parser.add_argument("--output", type=str, help="Output directory for compressed images", default="./compressed_images")
 
     args = parser.parse_args()
 

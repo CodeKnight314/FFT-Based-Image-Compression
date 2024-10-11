@@ -31,15 +31,15 @@ def compression_evaluation(img_path: str, threshold_value: int):
         img_path (str): Path to the image to be compressed.
         threshold_value (int): Threshold value for compression.
     """
-    img = np.array(Image.open(img_path).convert("RGB"))
-    img_compressed = compress(img, threshold_value)
+    img = Image.open(img_path).convert("RGB")
+    img_compressed = compress(img_path, threshold_value)
     psnr = psnr_calc(img, img_compressed)
     print(f"[INFO] Compression Performance at {threshold_value}: {psnr}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate the compression performance using PSNR.")
     parser.add_argument("--img_path", type=str, required=True, help="Path to the image to be compressed.")
-    parser.add_argument("--threshold_value", type=int, required=True, help="Threshold value for compression.")
+    parser.add_argument("--threshold", type=int, required=True, help="Threshold value for compression.")
     
     args = parser.parse_args()
-    compression_evaluation(args.img_path, args.threshold_value)
+    compression_evaluation(args.img_path, args.threshold)
