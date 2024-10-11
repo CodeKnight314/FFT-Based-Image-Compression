@@ -2,6 +2,13 @@
 
 This educational repository provides a Python implementation of image compression using the Fast Fourier Transform (FFT). The code utilizes the Discrete Fourier Transform (DFT) to transform image data into the frequency domain, where less significant frequencies can be discarded to achieve compression.
 
+## Results:
+<p align="center">
+  <img src="visuals/Figure_1.png" alt="Your image alt text">
+  <br>
+  <em>PSNR:  129.52 with 12% storage reduction</em>
+</p>
+
 ## Usage
 
 ### Prerequisites
